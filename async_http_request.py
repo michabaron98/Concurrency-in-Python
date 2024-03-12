@@ -1,8 +1,10 @@
-import requests
-import json
 import asyncio
+from http_request import get_data
 
 
-async def async_get_data(url: str, body: dict):
-	response = await requests.get(url=url, json=body)
-	return requests.json()
+async def async_get_data(url: str,
+						endpoint: dict,
+						headers = {"Content-Type": "application/json"}):
+	response = await asyncio.to_thread(get_data, url, endpoint)
+	return response
+
