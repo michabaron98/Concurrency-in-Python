@@ -11,23 +11,29 @@ from timer import calculate_execution_time, calculate_async_execution_time
 def main() -> None:
 
 	@calculate_async_execution_time
-	async def async_run():
+	async def async_run() -> None:
+		data=[]
 		tasks = [asyncio.ensure_future(async_get_data(API_URL, Endpoints.DINOSAURS_RANDOM)) for i in range(0, max_range)]
-		for data in await asyncio.gather(*tasks):
-			print(data['Name'])
+		for task_result in await asyncio.gather(*tasks):
+			data.append(task_result['Name'])
+		print(f"Extracted {len(data)} dinosaurs")
 
 	@calculate_execution_time
-	def run():
+	def run() -> None:
+		data = []
 		for i in range(0, max_range):
-			data = get_data(API_URL, Endpoints.DINOSAURS_RANDOM)
-			print(data['Name'])
+			task_result = get_data(API_URL, Endpoints.DINOSAURS_RANDOM)
+			data.append(task_result['Name'])
+		print(f"Extracted {len(data)} dinosaurs")
 
 	@calculate_async_execution_time
-	async def async_run_aiohttp():
+	async def async_run_aiohttp() -> None:
+		data = []
 		async with aiohttp.ClientSession() as session:
 			tasks = [asyncio.ensure_future(async_get_data_aiohttp(API_URL, Endpoints.DINOSAURS_RANDOM, session)) for i in range(0, max_range)]
-			for data in await asyncio.gather(*tasks):
-				print(data['Name'])
+			for task_result in await asyncio.gather(*tasks):
+				data.append(task_result['Name'])
+		print(f"Extracted {len(data)} dinosaurs")
 
 	max_range=100
 	asyncio.run(async_run())
